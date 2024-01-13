@@ -31,16 +31,17 @@ class AddList extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () async {
                     await getProvider.createTask();
-                    Navigator.pop(context);
-                    if (getProvider.createTask() == null) {
+                    if (await getProvider.isCreated == false) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text(
-                                'Failed to create task. Please try again.')),
+                          content:
+                              Text('Failed to create task. Please try again.'),
+                        ),
                       );
-                    } else {
+                    } else if (await getProvider.isCreated == true) {
                       getProvider.titlecontroller.clear();
                       getProvider.descriptioncontroller.clear();
+                      Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Created a new Task')),
                       );
