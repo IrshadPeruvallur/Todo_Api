@@ -2,8 +2,24 @@ import 'package:api_test/controller/todo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class AddTask extends StatelessWidget {
-  const AddTask({Key? key}) : super(key: key);
+class EditTask extends StatefulWidget {
+  final String? title;
+  final String? description;
+  final String? id;
+  const EditTask({Key? key, this.title, this.description, this.id})
+      : super(key: key);
+  @override
+  State<EditTask> createState() => _EditTaskState();
+}
+
+class _EditTaskState extends State<EditTask> {
+  @override
+  void initState() {
+    final getProvider = Provider.of<TodoProvider>(context, listen: false);
+    getProvider.titlecontroller.text = widget.title!;
+    getProvider.descriptioncontroller.text = widget.description!;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,20 +46,20 @@ class AddTask extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () async {
-                    await getProvider.createTask();
-                    if (await getProvider.isCreated == false) {
+                    await getProvider.editTask(widget.id!);
+                    if (await getProvider.isEdited == false) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content:
-                              Text('Failed to create task. Please try again.'),
+                              Text('Failed to edit task. Please try again.'),
                         ),
                       );
-                    } else if (await getProvider.isCreated == true) {
+                    } else if (await getProvider.isEdited == true) {
                       getProvider.titlecontroller.clear();
                       getProvider.descriptioncontroller.clear();
                       Navigator.pop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Created a new Task')),
+                        SnackBar(content: Text('Update Successfully ')),
                       );
                     }
                   },

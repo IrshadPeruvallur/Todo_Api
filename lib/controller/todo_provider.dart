@@ -11,6 +11,7 @@ class TodoProvider extends ChangeNotifier {
   List<TodoModel> taskList = [];
   late bool isCreated;
   late bool isDeleted;
+  late bool isEdited;
 
   Future<void> getTasks() async {
     try {
@@ -24,15 +25,14 @@ class TodoProvider extends ChangeNotifier {
     }
   }
 
-  createTask() async {
+  Future<void> createTask() async {
     try {
       await _todoService.createTask(TodoModel(
         title: titlecontroller.text,
         description: descriptioncontroller.text,
       ));
-      // getTasks();
-      notifyListeners();
       isCreated = true;
+      notifyListeners();
     } catch (error) {
       isCreated = false;
       log('Error creating task: $error');
@@ -43,13 +43,27 @@ class TodoProvider extends ChangeNotifier {
   deleteTask(String id) async {
     try {
       await _todoService.deleteTask(id);
+      isDeleted = true;
       notifyListeners();
       // getTasks();
     } catch (error) {
+      isDeleted = false;
       log('Error deleting task: $error');
       throw error;
     }
   }
 
-  editTask() async {}
+  editTask(String id) async {
+    try {
+      await _todoService.editTask(
+          TodoModel(
+              title: titlecontroller.text,
+              description: descriptioncontroller.text),
+          id);
+      isEdited = true;
+    } catch (e) {
+      isEdited = false;
+      throw e;
+    }
+  }
 }

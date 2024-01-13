@@ -42,9 +42,9 @@ class TodoService {
     }
   }
 
-  Future<void> editTask(TodoModel value, id) async {
+  Future<void> editTask(TodoModel value, String id) async {
     try {
-      await _dio.put('$_endpointUrl/$id');
+      await _dio.put('$_endpointUrl/$id', data: value.toJson());
     } catch (error) {
       log('Error editTask task: $error');
       throw Exception(error);

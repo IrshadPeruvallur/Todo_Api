@@ -1,7 +1,8 @@
-import 'dart:developer';
+// ...
 
 import 'package:api_test/controller/todo_provider.dart';
 import 'package:api_test/view/add_list.dart';
+import 'package:api_test/view/edit_task.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -36,9 +37,25 @@ class TodoList extends StatelessWidget {
                         onSelected: (String result) async {
                           if (result == 'Delete') {
                             await todoProvider.deleteTask(task.id.toString());
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Task Deleted Successfully'),
+                            if (await todoProvider.isDeleted == false) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Failed to delete task. Please try again.'),
+                                ),
+                              );
+                            } else if (await todoProvider.isDeleted == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Delete Successfully ')),
+                              );
+                            }
+                          } else if (result == "Edit") {
+                            showModalBottomSheet(
+                              context: context,
+                              builder: (context) => EditTask(
+                                title: task.title,
+                                description: task.description,
+                                id: task.id,
                               ),
                             );
                           }
@@ -64,7 +81,7 @@ class TodoList extends StatelessWidget {
         onPressed: () {
           showModalBottomSheet(
             context: context,
-            builder: (context) => AddList(),
+            builder: (context) => AddTask(),
           );
         },
         label: Text('Add Todo'),
